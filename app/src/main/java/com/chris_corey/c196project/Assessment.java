@@ -2,17 +2,17 @@ package com.chris_corey.c196project;
 
 import java.sql.Date;
 
-public class Assessmnet {
+public class Assessment {
     private int id, parentCourse;
     private String title, type;
     private Date dueDate;
 
-    public Assessmnet(int id, int parentCourse, String title, String type, Date dueDate) {
+    public Assessment(int id, String title, Date dueDate, String type, int parentCourse) {
         this.id = id;
-        this.parentCourse = parentCourse;
         this.title = title;
-        this.type = type;
         this.dueDate = dueDate;
+        this.type = type;
+        this.parentCourse = parentCourse;
     }
 
     public int getId() {

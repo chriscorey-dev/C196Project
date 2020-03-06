@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 public class TermListActivity extends AppCompatActivity {
     DBHelper dbHelper;
     ArrayList<Term> termList;
-    ArrayAdapter<String> adapter;
+    ArrayAdapter<String> termListAdapter;
 
     public static final String SELECTED_TERM_ID = "com.chris_corey.c196project";
 
@@ -25,20 +24,14 @@ public class TermListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_term_list);
 
-//        Intent intent = getIntent();
-//        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-//        Toast.makeText(this, "Message: " + message, Toast.LENGTH_SHORT).show();
+        ListView listViewTermList = findViewById(R.id.list_view_term_list);
+        termListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1); // Database method can't be run before this line
 
-        ListView listView = findViewById(R.id.list_view_term_list);
+        getDB();
+        getTermList();
 
-        // List View Stuff
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1); // Database method must be run any time after this line
-
-        initiateDatabase();
-        populateTermList();
-
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listViewTermList.setAdapter(termListAdapter);
+        listViewTermList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(TermListActivity.this, TermDetailsActivity.class);
@@ -49,21 +42,12 @@ public class TermListActivity extends AppCompatActivity {
         });
     }
 
-    private void initiateDatabase() {
-
+    private void getDB() {
         dbHelper = new DBHelper(TermListActivity.this);
         dbHelper.getWritableDatabase();
-
-        // DEBUG - Resets the database each time the app restarts
-        dbHelper.destroyDatabase();
-
-        dbHelper.createDatabase();
-
-        // DEBUG - Resets the database each time the app restarts
-        dbHelper.populateDatabase();
     }
 
-    private void populateTermList() {
+    private void getTermList() {
         Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM terms", null);
         termList = new ArrayList<>();
 
@@ -75,8 +59,8 @@ public class TermListActivity extends AppCompatActivity {
             Term term = new Term(cursor.getInt(cursor.getColumnIndex("id")), cursor.getString(cursor.getColumnIndex("title")), startDate, endDate);
             termList.add(term);
 
-            // Adds data to adapter
-            adapter.add(term.getTitle());
+            // Adds data to courseListAdapter in onCreate method
+            termListAdapter.add(term.getTitle());
         }
     }
 }

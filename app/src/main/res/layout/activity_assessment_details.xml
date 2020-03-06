@@ -5,28 +5,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="5dp"
-    tools:context=".TermDetailsActivity">
+    tools:context=".AssessmentDetailsActivity">
 
     <TextView
-        android:id="@+id/text_view_term_details_title"
+        android:id="@+id/text_view_assessment_details_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="term title" />
+        android:text="title" />
 
     <TextView
-        android:id="@+id/text_view_term_details_dates"
+        android:id="@+id/text_view_assessment_details_due_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="01/01/2020 - 06/01/2020" />
+        android:text="Due: 01/01/2020" />
 
     <TextView
+        android:id="@+id/text_view_assessment_details_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Courses" />
-
-    <ListView
-        android:id="@+id/list_view_term_details_course_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        android:text="OA/PA" />
 
 </LinearLayout>

@@ -44,10 +44,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // DEBUG
     public void populateDatabase() {
-        addTerm("Term 1", Date.valueOf("2020-04-01"), Date.valueOf("2020-10-01"));
-        addTerm("Term 2", Date.valueOf("2020-10-02"), Date.valueOf("2021-04-02"));
-        addCourse("Course 1", Date.valueOf("2020-04-01"), Date.valueOf("2020-10-01"), "My Notes", "Plan To Take", "Bob Roberts", "bob@roberts.com", "555-555-5555", 1);
-        addAssessment("Assessment 1", Date.valueOf("2020-10-01"), "OA", 1);
+        addTerm("Term 1", Date.valueOf("2020-01-01"), Date.valueOf("2020-06-30"));
+        addTerm("Term 2", Date.valueOf("2020-07-01"), Date.valueOf("2021-12-31"));
+        addCourse("Course 1", Date.valueOf("2020-01-01"), Date.valueOf("2020-01-31"), "My Notes", "In Progress", "Bob Roberts", "bob@roberts.com", "555-555-5555", 1);
+        addCourse("Course 2", Date.valueOf("2020-02-01"), Date.valueOf("2020-02-28"), "My Notes", "Plan To Take", "Bill Ribbets", "bill@ribbits.com", "555-555-5556", 1);
+        addAssessment("Assessment 1", Date.valueOf("2020-01-31"), "OA", 1);
+        addAssessment("Assessment 2", Date.valueOf("2020-02-28"), "PA", 2);
     }
 
     // DEBUG

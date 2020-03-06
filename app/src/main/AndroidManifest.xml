@@ -9,16 +9,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        // TODO: Fix up arrow not keeping data
+
         <activity
-            android:name=".TermListActivity"
-            android:parentActivityName=".MainActivity">
+            android:name=".AssessmentDetailsActivity"
+            android:parentActivityName=".CourseDetailsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".CourseDetailsActivity" />
+        </activity>
+        <activity
+            android:name=".CourseDetailsActivity"
+            android:parentActivityName=".TermDetailsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TermDetailsActivity" />
         </activity>
         <activity
             android:name=".TermDetailsActivity"
             android:parentActivityName=".TermListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TermListActivity" />
+        </activity>
+        <activity
+            android:name=".TermListActivity"
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
