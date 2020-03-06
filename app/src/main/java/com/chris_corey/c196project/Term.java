@@ -23,7 +23,7 @@ public class Term {
         this.key = key;
     }
 
-    public String getTitle() {
+        public String getTitle() {
         return title;
     }
 

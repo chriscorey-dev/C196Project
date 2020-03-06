@@ -44,9 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
         termList = new ArrayList<>();
 
+        // Gets data from DB and converts into objects
         while(cursor.moveToNext()) {
-//            int i = cursor.getPosition();
-
             Date startDate = Date.valueOf(cursor.getString(2));
             Date endDate = Date.valueOf(cursor.getString(3));
 
