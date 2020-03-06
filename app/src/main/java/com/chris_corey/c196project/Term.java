@@ -3,24 +3,24 @@ package com.chris_corey.c196project;
 import java.sql.Date;
 
 public class Term {
-    private int key;
+    private int id;
     private String title;
     private Date startDate;
     private Date endDate;
 
-    public Term(int key, String title, Date startDate, Date endDate) {
-        this.key = key;
+    public Term(int id, String title, Date startDate, Date endDate) {
+        this.id = id;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
-    public int getKey() {
-        return key;
+    public int getId() {
+        return id;
     }
 
-    public void setKey(int key) {
-        this.key = key;
+    public void setId(int id) {
+        this.id = id;
     }
 
         public String getTitle() {
