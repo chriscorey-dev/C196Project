@@ -40,6 +40,7 @@ public class CourseDetailsActivity extends AppCompatActivity {
         selectedCourseId = intent.getStringExtra(TermDetailsActivity.SELECTED_COURSE_ID);
 
         Button buttonAddNewAssessment = findViewById(R.id.btn_course_details_add_assessment);
+        Button buttonCourseNotes = findViewById(R.id.btn_course_details_notes);
 
         TextView courseTitle = findViewById(R.id.text_view_course_details_title);
         TextView courseDates = findViewById(R.id.text_view_course_details_dates);
@@ -77,6 +78,15 @@ public class CourseDetailsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        buttonCourseNotes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CourseDetailsActivity.this, CourseNotesActivity.class);
+                intent.putExtra("SELECTED_COURSE_ID", selectedCourseId);
+                startActivity(intent);
+            }
+        });
     }
 
     private void getDB() {
@@ -85,11 +95,11 @@ public class CourseDetailsActivity extends AppCompatActivity {
     }
 
     private Course getCourseInfo() {
-        Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM courses WHERE id = "+ selectedCourseId +";", null);
+        Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM courses WHERE id = " + selectedCourseId + ";", null);
         Course course = null;
 
         // Gets data from DB and convert into objects
-        while(cursor.moveToNext()) {
+        while (cursor.moveToNext()) {
             Date startDate = Date.valueOf(cursor.getString(cursor.getColumnIndex("start_date")));
             Date endDate = Date.valueOf(cursor.getString(cursor.getColumnIndex("end_date")));
 
@@ -105,7 +115,7 @@ public class CourseDetailsActivity extends AppCompatActivity {
         assessmentListAdapter.clear();
 
         // Gets data from DB and convert into objects
-        while(cursor.moveToNext()) {
+        while (cursor.moveToNext()) {
             Date dueDate = Date.valueOf(cursor.getString(cursor.getColumnIndex("due_date")));
 
             Assessment assessment = new Assessment(cursor.getInt(cursor.getColumnIndex("id")), cursor.getString(cursor.getColumnIndex("title")), dueDate, cursor.getString(cursor.getColumnIndex("type")), cursor.getInt(cursor.getColumnIndex("parent_course")));

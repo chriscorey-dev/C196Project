@@ -28,7 +28,7 @@ public class AddTermActivity extends AppCompatActivity {
 
         titleText = findViewById(R.id.edit_text_add_term_title);
 
-        final Button submitButton = findViewById(R.id.btn_add_term_submit);
+        Button submitButton = findViewById(R.id.btn_add_term_submit);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

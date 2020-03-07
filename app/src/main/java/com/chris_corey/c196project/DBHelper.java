@@ -1,8 +1,10 @@
 package com.chris_corey.c196project;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.sql.Date;
 
@@ -40,6 +42,21 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void addAssessment(String title, Date dueDate, String type, int parentCourse) {
         this.getWritableDatabase().execSQL("INSERT INTO assessments (title, due_date, type, parent_course) VALUES ('"+ title +"', '"+ dueDate +"', '"+ type +"', "+ parentCourse +")");
+    }
+
+    public String getCourseNotes(String courseId) {
+        Cursor cursor = this.getWritableDatabase().rawQuery("SELECT notes FROM courses WHERE id = " + courseId, null);
+        String notes = "";
+
+        while (cursor.moveToNext()) {
+            notes = cursor.getString(cursor.getColumnIndex("notes"));
+        }
+
+        return notes;
+    }
+
+    public void setCourseNotes(String notes, String courseId) {
+        this.getWritableDatabase().execSQL("UPDATE courses SET notes = '"+ notes +"' WHERE id = "+ courseId);
     }
 
     // DEBUG

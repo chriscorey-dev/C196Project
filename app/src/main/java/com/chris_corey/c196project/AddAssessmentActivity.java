@@ -45,7 +45,7 @@ public class AddAssessmentActivity extends AppCompatActivity {
                 // TODO: Validation
                 String title = titleText.getText().toString();
                 Date dueDate = Date.valueOf(displayDueDate.getText().toString());
-                String type = (radioGroup.getCheckedRadioButtonId() != 0) ? "OA" : "PA";
+                String type = (radioGroup.getCheckedRadioButtonId() != 0) ? "OA" : "PA"; // TODO: Not working
 
                 dbHelper.addAssessment(title, dueDate, type, Integer.valueOf(selectedCourseId));
                 onBackPressed();
