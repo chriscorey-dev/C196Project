@@ -27,7 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void createDatabase() {
         this.getWritableDatabase().execSQL("CREATE TABLE IF NOT EXISTS terms (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, start_date DATE, end_date DATE)");
         this.getWritableDatabase().execSQL("CREATE TABLE IF NOT EXISTS courses (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, start_date DATE, end_date DATE, notes TEXT, status TEXT, mentor_name TEXT, mentor_phone TEXT, mentor_email TEXT, parent_term INTEGER)");
-        this.getWritableDatabase().execSQL("CREATE TABLE IF NOT EXISTS assessments (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, due_date DATE, type TEXT, parent_course INTEGER)");
+        this.getWritableDatabase().execSQL("CREATE TABLE IF NOT EXISTS assessments (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, due_date DATE, type TEXT, complete BOOLEAN, parent_course INTEGER)");
     }
 
     public void addTerm(String title, Date startDate, Date endDate) {
@@ -44,12 +44,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // DEBUG
     public void populateDatabase() {
-        addTerm("Term 1", Date.valueOf("2020-01-01"), Date.valueOf("2020-06-30"));
-        addTerm("Term 2", Date.valueOf("2020-07-01"), Date.valueOf("2021-12-31"));
-        addCourse("Course 1", Date.valueOf("2020-01-01"), Date.valueOf("2020-01-31"), "My Notes", "In Progress", "Bob Roberts", "bob@roberts.com", "555-555-5555", 1);
-        addCourse("Course 2", Date.valueOf("2020-02-01"), Date.valueOf("2020-02-28"), "My Notes", "Plan To Take", "Bill Ribbets", "bill@ribbits.com", "555-555-5556", 1);
-        addAssessment("Assessment 1", Date.valueOf("2020-01-31"), "OA", 1);
-        addAssessment("Assessment 2", Date.valueOf("2020-02-28"), "PA", 2);
+        addTerm("Science Term", Date.valueOf("2020-01-01"), Date.valueOf("2020-06-30"));
+        addTerm("Arts Term", Date.valueOf("2020-07-01"), Date.valueOf("2021-12-31"));
+
+        addCourse("Math", Date.valueOf("2020-01-01"), Date.valueOf("2020-02-28"), "My Notes", "In Progress", "Bob Roberts", "bob@roberts.com", "555-555-5555", 1);
+        addCourse("Science", Date.valueOf("2020-03-01"), Date.valueOf("2020-04-30"), "My Notes", "Plan To Take", "Bill Ribbets", "bill@ribbits.com", "555-555-5556", 1);
+        addCourse("Reading", Date.valueOf("2020-07-01"), Date.valueOf("2020-07-31"), "My Notes", "Plan To Take", "Dick Richardson", "dick@richardson.com", "555-555-5557", 2);
+        addCourse("Writing", Date.valueOf("2020-08-01"), Date.valueOf("2020-10-31"), "My Notes", "Plan To Take", "Bill Williamson", "bill@williamson.com", "555-555-5558", 2);
+
+        addAssessment("Algebra", Date.valueOf("2020-01-31"), "OA", 1);
+        addAssessment("Geometry", Date.valueOf("2020-02-28"), "OA", 1);
+        addAssessment("Physics", Date.valueOf("2020-03-31"), "PA", 2);
+        addAssessment("Chemistry", Date.valueOf("2020-04-30"), "OA", 2);
+
+        addAssessment("Reading 101", Date.valueOf("2020-07-31"), "PA", 3);
+        addAssessment("Writing 101", Date.valueOf("2020-08-31"), "PA", 4);
+        addAssessment("Capstone Project", Date.valueOf("2020-10-31"), "PA", 4);
     }
 
     // DEBUG

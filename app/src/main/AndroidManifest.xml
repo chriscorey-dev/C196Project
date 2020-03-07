@@ -9,11 +9,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        // TODO: Fix up arrow not keeping data
-
+        <activity
+            android:name=".AddAssessmentActivity"
+            android:label="Add Assessment"
+            android:launchMode="singleTop"></activity>
+        <activity
+            android:name=".AddCourseActivity"
+            android:label="Add Course"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".AddTermActivity"
+            android:label="Add Term"
+            android:launchMode="singleTop"
+            android:parentActivityName=".TermListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TermListActivity" />
+        </activity>
         <activity
             android:name=".AssessmentDetailsActivity"
+            android:label="Assessment Details"
+            android:launchMode="singleTop"
             android:parentActivityName=".CourseDetailsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -21,6 +37,8 @@
         </activity>
         <activity
             android:name=".CourseDetailsActivity"
+            android:label="Course Details"
+            android:launchMode="singleTop"
             android:parentActivityName=".TermDetailsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -28,6 +46,8 @@
         </activity>
         <activity
             android:name=".TermDetailsActivity"
+            android:label="Term Details"
+            android:launchMode="singleTop"
             android:parentActivityName=".TermListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -35,12 +55,16 @@
         </activity>
         <activity
             android:name=".TermListActivity"
+            android:label="Term List"
+            android:launchMode="singleTop"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

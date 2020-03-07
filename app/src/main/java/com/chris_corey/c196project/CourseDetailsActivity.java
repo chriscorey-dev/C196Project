@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,12 +24,22 @@ public class CourseDetailsActivity extends AppCompatActivity {
     public static final String SELECTED_ASSESSMENT_ID = "com.chris_corey.c196project";
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        getDB();
+        getAssessmentList();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_details);
 
         Intent intent = getIntent();
         selectedCourseId = intent.getStringExtra(TermDetailsActivity.SELECTED_COURSE_ID);
+
+        Button buttonAddNewAssessment = findViewById(R.id.btn_course_details_add_assessment);
 
         TextView courseTitle = findViewById(R.id.text_view_course_details_title);
         TextView courseDates = findViewById(R.id.text_view_course_details_dates);
@@ -57,6 +68,15 @@ public class CourseDetailsActivity extends AppCompatActivity {
 
         // Getting associated course info
         getAssessmentList();
+
+        buttonAddNewAssessment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CourseDetailsActivity.this, AddAssessmentActivity.class);
+                intent.putExtra("SELECTED_COURSE_ID", selectedCourseId);
+                startActivity(intent);
+            }
+        });
     }
 
     private void getDB() {
@@ -81,6 +101,8 @@ public class CourseDetailsActivity extends AppCompatActivity {
     private void getAssessmentList() {
         Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM assessments WHERE parent_course = " + selectedCourseId, null);
         assessmentList = new ArrayList<>();
+
+        assessmentListAdapter.clear();
 
         // Gets data from DB and convert into objects
         while(cursor.moveToNext()) {

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -22,6 +23,14 @@ public class TermDetailsActivity extends AppCompatActivity {
     public static final String SELECTED_COURSE_ID = "com.chris_corey.c196project";
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        getDB();
+        getCourseList();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_term_details);
@@ -29,6 +38,7 @@ public class TermDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         selectedTermId = intent.getStringExtra(TermListActivity.SELECTED_TERM_ID);
 
+        Button buttonAddNewCourse = findViewById(R.id.btn_term_details_add_course);
         TextView termTitle = findViewById(R.id.text_view_term_details_title);
         TextView termDates = findViewById(R.id.text_view_term_details_dates);
 
@@ -49,13 +59,20 @@ public class TermDetailsActivity extends AppCompatActivity {
         // Getting term info
         getDB();
         Term term = getTermInfo();
+        getCourseList();
 
 
         termTitle.setText(term.getTitle());
         termDates.setText(term.getStartDate() + " - " + term.getEndDate());
 
-        // Getting associated course info
-        getCourseList();
+        buttonAddNewCourse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(TermDetailsActivity.this, AddCourseActivity.class);
+                intent.putExtra("SELECTED_TERM_ID", selectedTermId);
+                startActivity(intent);
+            }
+        });
     }
 
     private void getDB() {
@@ -80,6 +97,8 @@ public class TermDetailsActivity extends AppCompatActivity {
     private void getCourseList() {
         Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM courses WHERE parent_term = " + selectedTermId, null);
         courseList = new ArrayList<>();
+
+        courseListAdapter.clear();
 
         // Gets data from DB and convert into objects
         while(cursor.moveToNext()) {

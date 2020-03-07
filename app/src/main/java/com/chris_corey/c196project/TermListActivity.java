@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -20,10 +22,19 @@ public class TermListActivity extends AppCompatActivity {
     public static final String SELECTED_TERM_ID = "com.chris_corey.c196project";
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        getDB();
+        getTermList();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_term_list);
 
+        Button buttonAddNewTerm = findViewById(R.id.btn_term_list_add_term);
         ListView listViewTermList = findViewById(R.id.list_view_term_list);
         termListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1); // Database method can't be run before this line
 
@@ -40,6 +51,14 @@ public class TermListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        buttonAddNewTerm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(TermListActivity.this, AddTermActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void getDB() {
@@ -50,6 +69,8 @@ public class TermListActivity extends AppCompatActivity {
     private void getTermList() {
         Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM terms", null);
         termList = new ArrayList<>();
+
+        termListAdapter.clear();
 
         // Gets data from DB and convert into objects
         while(cursor.moveToNext()) {
