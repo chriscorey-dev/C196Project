@@ -7,12 +7,6 @@
     android:padding="5dp"
     tools:context=".TermListActivity">
 
-    <Button
-        android:id="@+id/btn_term_list_add_term"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Term" />
-
     <ListView
         android:id="@+id/list_view_term_list"
         android:layout_width="match_parent"

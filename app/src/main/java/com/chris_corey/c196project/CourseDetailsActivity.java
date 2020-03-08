@@ -4,11 +4,17 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +28,30 @@ public class CourseDetailsActivity extends AppCompatActivity {
     ArrayAdapter<String> assessmentListAdapter;
 
     public static final String SELECTED_ASSESSMENT_ID = "com.chris_corey.c196project";
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.edit_course:
+                // TODO: Update course
+                return true;
+            case R.id.delete_course:
+                // TODO: Delete course
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+//        return super.onCreateOptionsMenu(menu);
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.course_menu, menu);
+
+        return true;
+    }
 
     @Override
     protected void onResume() {
@@ -39,16 +69,25 @@ public class CourseDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         selectedCourseId = intent.getStringExtra(TermDetailsActivity.SELECTED_COURSE_ID);
 
-        Button buttonAddNewAssessment = findViewById(R.id.btn_course_details_add_assessment);
+//        Button buttonAddNewAssessment = findViewById(R.id.btn_course_details_add_assessment);
         Button buttonCourseNotes = findViewById(R.id.btn_course_details_notes);
 
         TextView courseTitle = findViewById(R.id.text_view_course_details_title);
         TextView courseDates = findViewById(R.id.text_view_course_details_dates);
         TextView courseStatus = findViewById(R.id.text_view_course_details_status);
+        TextView mentorName = findViewById(R.id.text_view_course_details_mentor_name);
+        TextView mentorPhone= findViewById(R.id.text_view_course_details_mentor_phone);
+        TextView mentorEmail = findViewById(R.id.text_view_course_details_mentor_email);
 
         ListView listViewAssessmentList = findViewById(R.id.list_view_course_details_assessment_list);
         assessmentListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1); // Database method can't be run before this line
         listViewAssessmentList.setAdapter(assessmentListAdapter);
+
+        Button buttonAddNewAssessment = new Button(this);
+        buttonAddNewAssessment.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT, AbsListView.LayoutParams.WRAP_CONTENT));
+        buttonAddNewAssessment.setText("Add Assessment");
+        listViewAssessmentList.addFooterView(buttonAddNewAssessment);
+
         listViewAssessmentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -66,6 +105,9 @@ public class CourseDetailsActivity extends AppCompatActivity {
         courseTitle.setText(course.getTitle());
         courseDates.setText(course.getStartDate() + " - " + course.getEndDate());
         courseStatus.setText(course.getStatus());
+        mentorName.setText(course.getMentorName());
+        mentorPhone.setText(course.getMentorPhone());
+        mentorEmail.setText(course.getMentorEmail());
 
         // Getting associated course info
         getAssessmentList();

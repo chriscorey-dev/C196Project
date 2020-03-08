@@ -3,6 +3,9 @@ package com.chris_corey.c196project;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +16,26 @@ public class CourseNotesActivity extends AppCompatActivity {
     DBHelper dbHelper;
     String selectedCourseId;
     EditText notesText;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.share_messages:
+                return true;
+            case R.id.share_email:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.course_notes_menu, menu);
+
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

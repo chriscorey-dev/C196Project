@@ -24,12 +24,6 @@
         android:layout_height="wrap_content"
         android:text="Courses" />
 
-    <Button
-        android:id="@+id/btn_term_details_add_course"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Course" />
-
     <ListView
         android:id="@+id/list_view_term_details_course_list"
         android:layout_width="match_parent"

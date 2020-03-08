@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -34,7 +35,6 @@ public class TermListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_term_list);
 
-        Button buttonAddNewTerm = findViewById(R.id.btn_term_list_add_term);
         ListView listViewTermList = findViewById(R.id.list_view_term_list);
         termListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1); // Database method can't be run before this line
 
@@ -42,6 +42,12 @@ public class TermListActivity extends AppCompatActivity {
         getTermList();
 
         listViewTermList.setAdapter(termListAdapter);
+
+        Button buttonAddNewTerm= new Button(this);
+        buttonAddNewTerm.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT, AbsListView.LayoutParams.WRAP_CONTENT));
+        buttonAddNewTerm.setText("Add Term");
+        listViewTermList.addFooterView(buttonAddNewTerm);
+
         listViewTermList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

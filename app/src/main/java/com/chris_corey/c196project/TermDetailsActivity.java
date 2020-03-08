@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -23,6 +27,30 @@ public class TermDetailsActivity extends AppCompatActivity {
     public static final String SELECTED_COURSE_ID = "com.chris_corey.c196project";
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.edit_term:
+                // TODO: Update term
+                return true;
+            case R.id.delete_term:
+                // TODO: Delete term
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+//        return super.onCreateOptionsMenu(menu);
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.term_menu, menu);
+
+        return true;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -38,13 +66,18 @@ public class TermDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         selectedTermId = intent.getStringExtra(TermListActivity.SELECTED_TERM_ID);
 
-        Button buttonAddNewCourse = findViewById(R.id.btn_term_details_add_course);
         TextView termTitle = findViewById(R.id.text_view_term_details_title);
         TextView termDates = findViewById(R.id.text_view_term_details_dates);
 
         ListView listViewCourseList = findViewById(R.id.list_view_term_details_course_list);
         courseListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1); // Database method can't be run before this line
         listViewCourseList.setAdapter(courseListAdapter);
+
+        Button buttonAddNewCourse= new Button(this);
+        buttonAddNewCourse.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT, AbsListView.LayoutParams.WRAP_CONTENT));
+        buttonAddNewCourse.setText("Add Course");
+        listViewCourseList.addFooterView(buttonAddNewCourse);
+
         listViewCourseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
