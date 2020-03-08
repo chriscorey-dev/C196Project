@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.sql.Date;
 import java.util.Calendar;
@@ -33,7 +34,14 @@ public class AddTermActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                // TODO: Validation
+
+                // Validation
+                if (!validate()) {
+                    Toast.makeText(AddTermActivity.this, "Bad Validation", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
                 String title = titleText.getText().toString();
                 Date startDate = Date.valueOf(displayStartDate.getText().toString());
                 Date endDate = Date.valueOf(displayEndDate.getText().toString());
@@ -98,6 +106,22 @@ public class AddTermActivity extends AppCompatActivity {
                 displayEndDate.setText(year+"-"+month+"-"+day);
             }
         };
+    }
+
+    private boolean validate() {
+        boolean isValid = true;
+
+        if (titleText.getText().length() == 0) {
+            isValid = false;
+        }
+        if (displayStartDate.getText().toString().equals("Start Date")) {
+            isValid = false;
+        }
+        if (displayEndDate.getText().toString().equals("End Date")) {
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     @Override

@@ -59,7 +59,15 @@ public class UpdateAssessmentActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                // TODO: Validation
+
+                // Validation
+                if (!validate()) {
+                    Toast.makeText(UpdateAssessmentActivity.this, "Bad Validation", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
+
                 String title = titleText.getText().toString();
                 Date dueDate = Date.valueOf(displayDueDate.getText().toString());
 
@@ -119,6 +127,19 @@ public class UpdateAssessmentActivity extends AppCompatActivity {
     private void getDB() {
         dbHelper = new DBHelper(UpdateAssessmentActivity.this);
         dbHelper.getWritableDatabase();
+    }
+
+    private boolean validate() {
+        boolean isValid = true;
+
+        if (titleText.getText().length() == 0) {
+            isValid = false;
+        }
+        if (displayDueDate.getText().toString().equals("Due Date")) {
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     @Override

@@ -51,7 +51,14 @@ public class UpdateTermActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                // TODO: Validation
+
+                // Validation
+                if (!validate()) {
+                    Toast.makeText(UpdateTermActivity.this, "Bad Validation", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
                 String title = titleText.getText().toString();
                 Date startDate = Date.valueOf(displayStartDate.getText().toString());
                 Date endDate = Date.valueOf(displayEndDate.getText().toString());
@@ -125,6 +132,22 @@ public class UpdateTermActivity extends AppCompatActivity {
     private void getDB() {
         dbHelper = new DBHelper(UpdateTermActivity.this);
         dbHelper.getWritableDatabase();
+    }
+
+    private boolean validate() {
+        boolean isValid = true;
+
+        if (titleText.getText().length() == 0) {
+            isValid = false;
+        }
+        if (displayStartDate.getText().toString().equals("Start Date")) {
+            isValid = false;
+        }
+        if (displayEndDate.getText().toString().equals("End Date")) {
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     @Override

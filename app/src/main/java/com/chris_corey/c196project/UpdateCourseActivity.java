@@ -58,7 +58,15 @@ public class UpdateCourseActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                // TODO: Validation
+
+                // Validation
+                if (!validate()) {
+                    Toast.makeText(UpdateCourseActivity.this, "Bad Validation", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
+
                 String title = titleText.getText().toString();
                 Date startDate = Date.valueOf(displayStartDate.getText().toString());
                 Date endDate = Date.valueOf(displayEndDate.getText().toString());
@@ -133,6 +141,31 @@ public class UpdateCourseActivity extends AppCompatActivity {
                 displayEndDate.setText(year+"-"+month+"-"+day);
             }
         };
+    }
+
+    private boolean validate() {
+        boolean isValid = true;
+
+        if (titleText.getText().length() == 0) {
+            isValid = false;
+        }
+        if (displayStartDate.getText().toString().equals("Start Date")) {
+            isValid = false;
+        }
+        if (displayEndDate.getText().toString().equals("End Date")) {
+            isValid = false;
+        }
+        if (mentorNameText.getText().length() == 0) {
+            isValid = false;
+        }
+        if (mentorPhoneText.getText().length() == 0) {
+            isValid = false;
+        }
+        if (mentorEmailText.getText().length() == 0) {
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     private void getDB() {
