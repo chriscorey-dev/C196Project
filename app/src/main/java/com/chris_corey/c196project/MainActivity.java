@@ -11,6 +11,19 @@ import java.sql.Date;
 public class MainActivity extends AppCompatActivity {
     DBHelper dbHelper;
 
+    //TODO LIST:
+    //TODO: Ability to change course status
+    //TODO: Ability to change assessment status?
+    //TODO: 'as many as 5 assessments to each course'
+    //TODO: Share course notes
+    //TODO: Notification on start & end date for courses
+    //TODO: Notification on due dates for assessments
+    //TODO: Custom color scheme & icon
+    //TODO: Home screen ('scheduling and progress tracking elements'
+    //TODO: Essay
+    //TODO: Pictures of storyboard
+    //TODO: Screenshots of deployment package
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
