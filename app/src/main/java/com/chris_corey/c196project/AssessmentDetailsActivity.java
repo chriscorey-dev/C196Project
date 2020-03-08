@@ -77,4 +77,10 @@ public class AssessmentDetailsActivity extends AppCompatActivity {
         }
         return assessment;
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dbHelper.close();
+    }
 }

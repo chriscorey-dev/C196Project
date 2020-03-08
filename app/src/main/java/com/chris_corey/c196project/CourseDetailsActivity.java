@@ -167,4 +167,10 @@ public class CourseDetailsActivity extends AppCompatActivity {
             assessmentListAdapter.add(assessment.getTitle());
         }
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dbHelper.close();
+    }
 }

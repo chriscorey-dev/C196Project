@@ -145,4 +145,10 @@ public class TermDetailsActivity extends AppCompatActivity {
             courseListAdapter.add(course.getTitle());
         }
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dbHelper.close();
+    }
 }

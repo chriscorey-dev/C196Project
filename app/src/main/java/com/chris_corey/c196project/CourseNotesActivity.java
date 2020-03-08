@@ -10,8 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.sql.Date;
-
 public class CourseNotesActivity extends AppCompatActivity {
     DBHelper dbHelper;
     String selectedCourseId;
@@ -19,6 +17,8 @@ public class CourseNotesActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        saveNotes();
+
         switch (item.getItemId()) {
             case R.id.share_messages:
                 return true;
@@ -54,17 +54,32 @@ public class CourseNotesActivity extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                // TODO: Validation
-
-                dbHelper.setCourseNotes(notesText.getText().toString(), selectedCourseId);
                 onBackPressed();
             }
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        saveNotes();
+
+        super.onBackPressed();
+    }
+
+    private void saveNotes() {
+        // TODO: Validation
+
+        dbHelper.setCourseNotes(notesText.getText().toString(), selectedCourseId);
+    }
+
     private void getDB() {
         dbHelper = new DBHelper(CourseNotesActivity.this);
         dbHelper.getWritableDatabase();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dbHelper.close();
     }
 }

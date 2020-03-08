@@ -110,4 +110,10 @@ public class AddCourseActivity extends AppCompatActivity {
             }
         };
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dbHelper.close();
+    }
 }

@@ -11,7 +11,8 @@
         android:id="@+id/text_view_term_details_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="term title" />
+        android:text="term title"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
 
     <TextView
         android:id="@+id/text_view_term_details_dates"

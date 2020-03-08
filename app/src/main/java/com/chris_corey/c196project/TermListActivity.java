@@ -90,4 +90,10 @@ public class TermListActivity extends AppCompatActivity {
             termListAdapter.add(term.getTitle());
         }
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dbHelper.close();
+    }
 }

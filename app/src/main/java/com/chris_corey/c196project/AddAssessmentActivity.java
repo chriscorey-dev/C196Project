@@ -84,4 +84,10 @@ public class AddAssessmentActivity extends AppCompatActivity {
             }
         };
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dbHelper.close();
+    }
 }

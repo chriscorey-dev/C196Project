@@ -99,4 +99,10 @@ public class AddTermActivity extends AppCompatActivity {
             }
         };
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dbHelper.close();
+    }
 }
