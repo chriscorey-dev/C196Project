@@ -1,15 +1,21 @@
 package com.chris_corey.c196project;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    DBHelper dbHelper;
+    public DBHelper dbHelper;
 
     //TODO LIST:
     //TODO: Ability to change course status
@@ -41,17 +47,35 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void initiateDatabase() {
-
         dbHelper = new DBHelper(MainActivity.this);
         dbHelper.getWritableDatabase();
-
-        // DEBUG - Resets the database each time the app restarts
-        dbHelper.destroyDatabase();
-
         dbHelper.createDatabase();
+    }
 
-        // DEBUG - Resets the database each time the app restarts
+    private void resetDatabase() {
+        // DEBUG
+        dbHelper.destroyDatabase();
+        dbHelper.createDatabase();
         dbHelper.populateDatabase();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.reset_database:
+                resetDatabase();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_menu, menu);
+
+        return true;
     }
 
     @Override
