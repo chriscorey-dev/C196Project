@@ -8,7 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import java.sql.Date;
 import java.util.Calendar;
@@ -17,8 +19,10 @@ public class AddAssessmentActivity extends AppCompatActivity {
     DBHelper dbHelper;
     String selectedCourseId;
     EditText titleText;
-    RadioGroup radioGroup;
     Button displayDueDate;
+
+    RadioGroup radioGroup;
+    RadioButton radioButton;
 
     DatePickerDialog.OnDateSetListener dueDateListener;
 
@@ -30,12 +34,11 @@ public class AddAssessmentActivity extends AppCompatActivity {
         Intent intent = getIntent();
         selectedCourseId = intent.getStringExtra("SELECTED_COURSE_ID");
 
-
         dbHelper = new DBHelper(AddAssessmentActivity.this);
 
         titleText = findViewById(R.id.edit_text_add_assessment_title);
         radioGroup = findViewById(R.id.radio_grp_add_assessment);
-        radioGroup.getCheckedRadioButtonId();
+
 
         Button submitButton = findViewById(R.id.btn_add_assessment_submit);
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -45,7 +48,12 @@ public class AddAssessmentActivity extends AppCompatActivity {
                 // TODO: Validation
                 String title = titleText.getText().toString();
                 Date dueDate = Date.valueOf(displayDueDate.getText().toString());
-                String type = (radioGroup.getCheckedRadioButtonId() != 0) ? "OA" : "PA"; // TODO: Not working
+
+                int radioId = radioGroup.getCheckedRadioButtonId();
+                radioButton = findViewById(radioId);
+
+                String type = (radioButton.getText() == "Objective Assessment") ? "OA" : "PA";
+
 
                 dbHelper.addAssessment(title, dueDate, type, Integer.valueOf(selectedCourseId));
                 onBackPressed();
@@ -83,6 +91,11 @@ public class AddAssessmentActivity extends AppCompatActivity {
                 displayDueDate.setText(year+"-"+month+"-"+day);
             }
         };
+    }
+
+    public void checkButton(View v) {
+        int radioId = radioGroup.getCheckedRadioButtonId();
+        radioButton = findViewById(radioId);
     }
 
     @Override
