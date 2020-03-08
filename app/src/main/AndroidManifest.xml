@@ -9,7 +9,41 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CourseNotesActivity"></activity>
+        <activity android:name=".UpdateAssessmentActivity"
+            android:label="Update Assessment"
+            android:launchMode="singleTop"
+            android:parentActivityName=".AssessmentDetailsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".AssessmentDetailsActivity" />
+        </activity>
+        <activity
+            android:name=".UpdateCourseActivity"
+            android:label="Update Course"
+            android:launchMode="singleTop"
+            android:parentActivityName=".CourseDetailsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".CourseDetailsActivity" />
+        </activity>
+        <activity
+            android:name=".UpdateTermActivity"
+            android:label="Update Term"
+            android:launchMode="singleTop"
+            android:parentActivityName=".TermDetailsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TermDetailsActivity" />
+        </activity>
+        <activity
+            android:name=".CourseNotesActivity"
+            android:label="Course Notes"
+            android:launchMode="singleTop"
+            android:parentActivityName=".CourseDetailsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".CourseDetailsActivity" />
+        </activity>
         <activity
             android:name=".AddAssessmentActivity"
             android:label="Add Assessment"

@@ -33,8 +33,53 @@ public class DBHelper extends SQLiteOpenHelper {
         this.getWritableDatabase().execSQL("CREATE TABLE IF NOT EXISTS assessments (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, due_date DATE, type TEXT, complete BOOLEAN, parent_course INTEGER)");
     }
 
+    public Term getTermFromId(String id) {
+        Cursor cursor = this.getWritableDatabase().rawQuery("SELECT * FROM terms WHERE id = "+ id, null);
+        Term term = null;
+
+        // Gets data from DB and convert into objects
+        while(cursor.moveToNext()) {
+            Date startDate = Date.valueOf(cursor.getString(cursor.getColumnIndex("start_date")));
+            Date endDate = Date.valueOf(cursor.getString(cursor.getColumnIndex("end_date")));
+
+            term = new Term(cursor.getInt(cursor.getColumnIndex("id")), cursor.getString(cursor.getColumnIndex("title")), startDate, endDate);
+        }
+        return term;
+    }
+
+    public Course getCourseFromId(String id) {
+        Cursor cursor = this.getWritableDatabase().rawQuery("SELECT * FROM courses WHERE id = "+ id, null);
+        Course course = null;
+
+        // Gets data from DB and convert into objects
+        while(cursor.moveToNext()) {
+            Date startDate = Date.valueOf(cursor.getString(cursor.getColumnIndex("start_date")));
+            Date endDate = Date.valueOf(cursor.getString(cursor.getColumnIndex("end_date")));
+
+            course = new Course(cursor.getInt(cursor.getColumnIndex("id")), cursor.getString(cursor.getColumnIndex("title")), startDate, endDate, cursor.getString(cursor.getColumnIndex("notes")), cursor.getString(cursor.getColumnIndex("status")), cursor.getString(cursor.getColumnIndex("mentor_name")), cursor.getString(cursor.getColumnIndex("mentor_phone")), cursor.getString(cursor.getColumnIndex("mentor_email")), cursor.getInt(cursor.getColumnIndex("parent_term")));
+        }
+        return course;
+    }
+
+    public Assessment getAssessmentFromId(String id) {
+        Cursor cursor = this.getWritableDatabase().rawQuery("SELECT * FROM assessments WHERE id = "+ id, null);
+        Assessment assessment = null;
+
+        // Gets data from DB and convert into objects
+        while(cursor.moveToNext()) {
+            Date dueDate = Date.valueOf(cursor.getString(cursor.getColumnIndex("due_date")));
+
+            assessment = new Assessment(cursor.getInt(cursor.getColumnIndex("id")), cursor.getString(cursor.getColumnIndex("title")), dueDate, cursor.getString(cursor.getColumnIndex("type")), cursor.getInt(cursor.getColumnIndex("parent_course")));
+        }
+        return assessment;
+    }
+
     public void addTerm(String title, Date startDate, Date endDate) {
         this.getWritableDatabase().execSQL("INSERT INTO terms (title, start_date, end_date) VALUES ('"+ title +"', '"+ startDate +"', '"+ endDate +"')");
+    }
+
+    public void updateTerm(Term term) {
+        this.getWritableDatabase().execSQL("UPDATE terms SET title = '"+ term.getTitle() +"', start_date = '"+ term.getStartDate() +"', end_date = '"+ term.getEndDate() +"' WHERE id = "+ term.getId());
     }
 
     public void deleteTerm(String id) {
@@ -46,8 +91,13 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+
     public void addCourse(String title, Date startDate, Date endDate, String notes, String status, String mentorName, String mentorEmail, String mentorPhone, int parentTerm) {
         this.getWritableDatabase().execSQL("INSERT INTO courses (title, start_date, end_date, notes, status, mentor_name, mentor_email, mentor_phone, parent_term) VALUES ('"+ title +"', '"+ startDate +"', '"+ endDate +"', '"+ notes +"', '"+ status +"', '"+ mentorName +"', '"+ mentorEmail +"', '"+ mentorPhone +"', "+ parentTerm +")");
+    }
+
+    public void updateCourse(Course course) {
+        this.getWritableDatabase().execSQL("UPDATE courses SET title = '"+ course.getTitle() +"', start_date = '"+ course.getStartDate() +"', end_date = '"+ course.getEndDate() +"', mentor_name = '"+ course.getMentorName() +"', mentor_phone = '"+ course.getMentorPhone() +"', mentor_email = '"+ course.getMentorEmail() +"' WHERE id = "+ course.getId());
     }
 
     public void deleteCourse(String id) {
@@ -59,13 +109,19 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+
     public void addAssessment(String title, Date dueDate, String type, int parentCourse) {
         this.getWritableDatabase().execSQL("INSERT INTO assessments (title, due_date, type, parent_course) VALUES ('"+ title +"', '"+ dueDate +"', '"+ type +"', "+ parentCourse +")");
+    }
+
+    public void updateAssessment(Assessment assessment) {
+        this.getWritableDatabase().execSQL("UPDATE assessments SET title = '"+ assessment.getTitle() +"', due_date = '"+ assessment.getDueDate() +"', type = '"+ assessment.getType() +"' WHERE id = "+ assessment.getId());
     }
 
     public void deleteAssessment(String id) {
         this.getWritableDatabase().delete("assessments", "id = " + id, null);
     }
+
 
     public String getCourseNotes(String courseId) {
         Cursor cursor = this.getWritableDatabase().rawQuery("SELECT notes FROM courses WHERE id = " + courseId, null);

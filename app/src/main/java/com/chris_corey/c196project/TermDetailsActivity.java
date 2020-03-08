@@ -26,13 +26,19 @@ public class TermDetailsActivity extends AppCompatActivity {
     ArrayList<Course> courseList;
     ArrayAdapter<String> courseListAdapter;
 
+    Term term;
+
+    TextView termTitle, termDates;
+
     public static final String SELECTED_COURSE_ID = "com.chris_corey.c196project";
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.edit_term:
-                // TODO: Update term
+                Intent intent = new Intent(TermDetailsActivity.this, UpdateTermActivity.class);
+                intent.putExtra("SELECTED_TERM_ID", selectedTermId);
+                startActivity(intent);
                 return true;
             case R.id.delete_term:
                 ArrayList<String> associatedCourses = dbHelper.getAssociatedCourses(selectedTermId);
@@ -71,7 +77,9 @@ public class TermDetailsActivity extends AppCompatActivity {
         super.onResume();
 
         getDB();
+        term = dbHelper.getTermFromId(selectedTermId);
         getCourseList();
+        updateTermInfo();
     }
 
     @Override
@@ -82,8 +90,8 @@ public class TermDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         selectedTermId = intent.getStringExtra(TermListActivity.SELECTED_TERM_ID);
 
-        TextView termTitle = findViewById(R.id.text_view_term_details_title);
-        TextView termDates = findViewById(R.id.text_view_term_details_dates);
+        termTitle = findViewById(R.id.text_view_term_details_title);
+        termDates = findViewById(R.id.text_view_term_details_dates);
 
         ListView listViewCourseList = findViewById(R.id.list_view_term_details_course_list);
         courseListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1); // Database method can't be run before this line
@@ -107,12 +115,9 @@ public class TermDetailsActivity extends AppCompatActivity {
 
         // Getting term info
         getDB();
-        Term term = getTermInfo();
+        term = dbHelper.getTermFromId(selectedTermId);
         getCourseList();
-
-
-        termTitle.setText(term.getTitle());
-        termDates.setText(term.getStartDate() + " - " + term.getEndDate());
+        updateTermInfo();
 
         buttonAddNewCourse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,23 +129,14 @@ public class TermDetailsActivity extends AppCompatActivity {
         });
     }
 
+    private void updateTermInfo() {
+        termTitle.setText(term.getTitle());
+        termDates.setText(term.getStartDate() + " - " + term.getEndDate());
+    }
+
     private void getDB() {
         dbHelper = new DBHelper(TermDetailsActivity.this);
         dbHelper.getWritableDatabase();
-    }
-
-    private Term getTermInfo() {
-        Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM terms WHERE id = "+ selectedTermId +";", null);
-        Term term = null;
-
-        // Gets data from DB and convert into objects
-        while(cursor.moveToNext()) {
-            Date startDate = Date.valueOf(cursor.getString(cursor.getColumnIndex("start_date")));
-            Date endDate = Date.valueOf(cursor.getString(cursor.getColumnIndex("end_date")));
-
-            term = new Term(cursor.getInt(cursor.getColumnIndex("id")), cursor.getString(cursor.getColumnIndex("title")), startDate, endDate);
-        }
-        return term;
     }
 
     private void getCourseList() {

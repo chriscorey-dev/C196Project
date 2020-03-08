@@ -16,11 +16,17 @@ public class AssessmentDetailsActivity extends AppCompatActivity {
     DBHelper dbHelper;
     String selectedAssessmentId;
 
+    Assessment assessment;
+
+    TextView assessmentTitle, assessmentDates, assessmentType;
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.edit_assessment:
-                // TODO: Update term
+                Intent intent = new Intent(AssessmentDetailsActivity.this, UpdateAssessmentActivity.class);
+                intent.putExtra("SELECTED_ASSESSMENT_ID", selectedAssessmentId);
+                startActivity(intent);
                 return true;
             case R.id.delete_assessment:
                 dbHelper.deleteAssessment(selectedAssessmentId);
@@ -33,8 +39,6 @@ public class AssessmentDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        return super.onCreateOptionsMenu(menu);
-
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.assessment_menu, menu);
 
@@ -49,12 +53,16 @@ public class AssessmentDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         selectedAssessmentId = intent.getStringExtra(CourseDetailsActivity.SELECTED_ASSESSMENT_ID);
 
-        TextView assessmentTitle = findViewById(R.id.text_view_assessment_details_title);
-        TextView assessmentDates = findViewById(R.id.text_view_assessment_details_due_date);
-        TextView assessmentType = findViewById(R.id.text_view_assessment_details_type);
+        assessmentTitle = findViewById(R.id.text_view_assessment_details_title);
+        assessmentDates = findViewById(R.id.text_view_assessment_details_due_date);
+        assessmentType = findViewById(R.id.text_view_assessment_details_type);
 
         getDB();
-        Assessment assessment = getAssessmentInfo();
+        assessment = dbHelper.getAssessmentFromId(selectedAssessmentId);
+        updateAssessmentInfo();
+    }
+
+    private void updateAssessmentInfo() {
 
         assessmentTitle.setText(assessment.getTitle());
         assessmentDates.setText("Due: " + assessment.getDueDate());
@@ -66,22 +74,18 @@ public class AssessmentDetailsActivity extends AppCompatActivity {
         dbHelper.getWritableDatabase();
     }
 
-    private Assessment getAssessmentInfo() {
-        Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM assessments WHERE id = "+ selectedAssessmentId +";", null);
-        Assessment assessment = null;
-
-        // Gets data from DB and convert into objects
-        while(cursor.moveToNext()) {
-            Date dueDate = Date.valueOf(cursor.getString(cursor.getColumnIndex("due_date")));
-
-            assessment = new Assessment(cursor.getInt(cursor.getColumnIndex("id")), cursor.getString(cursor.getColumnIndex("title")), dueDate, cursor.getString(cursor.getColumnIndex("type")), cursor.getInt(cursor.getColumnIndex("parent_course")));
-        }
-        return assessment;
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
         dbHelper.close();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        getDB();
+        assessment = dbHelper.getAssessmentFromId(selectedAssessmentId);
+        updateAssessmentInfo();
     }
 }
