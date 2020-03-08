@@ -1,7 +1,9 @@
 package com.chris_corey.c196project;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -36,7 +38,23 @@ public class CourseDetailsActivity extends AppCompatActivity {
                 // TODO: Update course
                 return true;
             case R.id.delete_course:
-                // TODO: Delete course
+
+                ArrayList<String> associatedAssessments = dbHelper.getAssociatedAssessments(selectedCourseId);
+
+                if (associatedAssessments.size() > 0) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                    alertDialogBuilder.setTitle("Confirmation").setMessage("This course has " + associatedAssessments.size() + " associated assessments.\nStill Delete?").setCancelable(true).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dbHelper.deleteCourse(selectedCourseId);
+                            onBackPressed();
+                        }
+                    }).setNegativeButton("No", null).show();
+                } else {
+                    dbHelper.deleteCourse(selectedCourseId);
+                    onBackPressed();
+                }
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -76,7 +94,7 @@ public class CourseDetailsActivity extends AppCompatActivity {
         TextView courseDates = findViewById(R.id.text_view_course_details_dates);
         TextView courseStatus = findViewById(R.id.text_view_course_details_status);
         TextView mentorName = findViewById(R.id.text_view_course_details_mentor_name);
-        TextView mentorPhone= findViewById(R.id.text_view_course_details_mentor_phone);
+        TextView mentorPhone = findViewById(R.id.text_view_course_details_mentor_phone);
         TextView mentorEmail = findViewById(R.id.text_view_course_details_mentor_email);
 
         ListView listViewAssessmentList = findViewById(R.id.list_view_course_details_assessment_list);

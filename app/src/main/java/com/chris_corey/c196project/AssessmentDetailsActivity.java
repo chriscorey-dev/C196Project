@@ -23,7 +23,8 @@ public class AssessmentDetailsActivity extends AppCompatActivity {
                 // TODO: Update term
                 return true;
             case R.id.delete_assessment:
-                // TODO: Delete term
+                dbHelper.deleteAssessment(selectedAssessmentId);
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

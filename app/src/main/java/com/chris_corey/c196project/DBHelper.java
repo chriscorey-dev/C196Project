@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -36,12 +37,34 @@ public class DBHelper extends SQLiteOpenHelper {
         this.getWritableDatabase().execSQL("INSERT INTO terms (title, start_date, end_date) VALUES ('"+ title +"', '"+ startDate +"', '"+ endDate +"')");
     }
 
+    public void deleteTerm(String id) {
+        this.getWritableDatabase().delete("terms", "id = " + id, null);
+
+        ArrayList<String> associatedIds = getAssociatedCourses(id);
+        for (String courseId : associatedIds) {
+            deleteCourse(courseId);
+        }
+    }
+
     public void addCourse(String title, Date startDate, Date endDate, String notes, String status, String mentorName, String mentorEmail, String mentorPhone, int parentTerm) {
         this.getWritableDatabase().execSQL("INSERT INTO courses (title, start_date, end_date, notes, status, mentor_name, mentor_email, mentor_phone, parent_term) VALUES ('"+ title +"', '"+ startDate +"', '"+ endDate +"', '"+ notes +"', '"+ status +"', '"+ mentorName +"', '"+ mentorEmail +"', '"+ mentorPhone +"', "+ parentTerm +")");
     }
 
+    public void deleteCourse(String id) {
+        this.getWritableDatabase().delete("courses", "id = " + id, null);
+
+        ArrayList<String> associatedIds = getAssociatedAssessments(id);
+        for (String assessmentId : associatedIds) {
+            deleteAssessment(assessmentId);
+        }
+    }
+
     public void addAssessment(String title, Date dueDate, String type, int parentCourse) {
         this.getWritableDatabase().execSQL("INSERT INTO assessments (title, due_date, type, parent_course) VALUES ('"+ title +"', '"+ dueDate +"', '"+ type +"', "+ parentCourse +")");
+    }
+
+    public void deleteAssessment(String id) {
+        this.getWritableDatabase().delete("assessments", "id = " + id, null);
     }
 
     public String getCourseNotes(String courseId) {
@@ -53,6 +76,32 @@ public class DBHelper extends SQLiteOpenHelper {
         }
 
         return notes;
+    }
+
+    public ArrayList<String> getAssociatedAssessments(String parentId) {
+        ArrayList<String> associatedIds = new ArrayList<>();
+        Cursor cursor = this.getWritableDatabase().rawQuery("SELECT * FROM assessments WHERE parent_course = "+ parentId, null);
+
+        while (cursor.moveToNext()) {
+            associatedIds.add(cursor.getString(cursor.getColumnIndex("id")));
+        }
+
+        return associatedIds;
+    }
+
+    public ArrayList<String> getAssociatedCourses(String parentId) {
+        ArrayList<String> associatedIds = new ArrayList<>();
+        Cursor cursor = this.getWritableDatabase().rawQuery("SELECT * FROM courses WHERE parent_term = "+ parentId, null);
+
+        while (cursor.moveToNext()) {
+            associatedIds.add(cursor.getString(cursor.getColumnIndex("id")));
+        }
+
+        for (String id : associatedIds) {
+            deleteCourse(id);
+        }
+
+        return associatedIds;
     }
 
     public void setCourseNotes(String notes, String courseId) {

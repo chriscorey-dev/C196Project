@@ -13,11 +13,21 @@
         <activity
             android:name=".AddAssessmentActivity"
             android:label="Add Assessment"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:parentActivityName=".AssessmentDetailsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".AssessmentDetailsActivity" />
+        </activity>
         <activity
             android:name=".AddCourseActivity"
             android:label="Add Course"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:parentActivityName=".CourseDetailsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".CourseDetailsActivity" />
+        </activity>
         <activity
             android:name=".AddTermActivity"
             android:label="Add Term"
