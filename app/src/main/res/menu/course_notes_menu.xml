@@ -3,18 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/share_notes"
         android:icon="@drawable/ic_share_white_24dp"
         android:title="Share Notes"
         app:showAsAction="ifRoom">
 
-        <menu>
-            <item
-                android:id="@+id/share_messages"
-                android:title="Share via Messages" />
-            <item
-                android:id="@+id/share_email"
-                android:title="Share via Email" />
-        </menu>
+        <!--<menu>-->
+        <!--<item-->
+        <!--android:id="@+id/share_messages"-->
+        <!--android:title="Share via Messages" />-->
+        <!--<item-->
+        <!--android:id="@+id/share_email"-->
+        <!--android:title="Share via Email" />-->
+        <!--</menu>-->
+
+        <!--<menu>-->
+        <!--<item-->
+        <!--android:id="@+id/share_notes"-->
+        <!--android:title="Share notes" />-->
+        <!--</menu>-->
 
     </item>
 

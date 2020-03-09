@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     //TODO: Ability to change course status
     //TODO: Ability to change assessment status?
     //TODO: 'as many as 5 assessments to each course'
-    //TODO: Share course notes
     //TODO: Notification on start & end date for courses
     //TODO: Notification on due dates for assessments
     //TODO: Custom color scheme & icon
@@ -63,7 +62,14 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.reset_database:
-                resetDatabase();
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setTitle("Confirmation").setMessage("Are you sure you want to completely reset the database?").setCancelable(true).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        resetDatabase();
+                    }
+                }).setNegativeButton("No", null).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

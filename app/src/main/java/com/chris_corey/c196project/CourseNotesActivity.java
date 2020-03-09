@@ -20,10 +20,20 @@ public class CourseNotesActivity extends AppCompatActivity {
         saveNotes();
 
         switch (item.getItemId()) {
-            case R.id.share_messages:
+            case R.id.share_notes:
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, notesText.getText().toString());
+                sendIntent.setType("text/plain");
+
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+                startActivity(shareIntent);
+
                 return true;
-            case R.id.share_email:
-                return true;
+//            case R.id.share_messages:
+//                return true;
+//            case R.id.share_email:
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
