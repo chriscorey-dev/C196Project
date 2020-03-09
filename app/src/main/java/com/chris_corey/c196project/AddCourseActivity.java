@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.sql.Date;
@@ -18,6 +21,7 @@ public class AddCourseActivity extends AppCompatActivity {
     String selectedTermId;
     EditText titleText, mentorNameText, mentorPhoneText , mentorEmailText ;
     Button displayStartDate, displayEndDate;
+    Spinner statusSpinner;
 
     DatePickerDialog.OnDateSetListener startDateListener;
     DatePickerDialog.OnDateSetListener endDateListener;
@@ -36,6 +40,11 @@ public class AddCourseActivity extends AppCompatActivity {
         mentorNameText = findViewById(R.id.edit_text_add_course_mentor_name);
         mentorPhoneText  = findViewById(R.id.edit_text_add_course_mentor_phone);
         mentorEmailText  = findViewById(R.id.edit_text_add_course_mentor_email);
+        statusSpinner = findViewById(R.id.spinner_add_course_status);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.course_status, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        statusSpinner.setAdapter(adapter);
 
         Button submitButton = findViewById(R.id.btn_add_course_submit);
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -53,11 +62,12 @@ public class AddCourseActivity extends AppCompatActivity {
                 String title = titleText.getText().toString();
                 Date startDate = Date.valueOf(displayStartDate.getText().toString());
                 Date endDate = Date.valueOf(displayEndDate.getText().toString());
+                String status = statusSpinner.getSelectedItem().toString();
                 String mentorName = mentorNameText.getText().toString();
                 String mentorPhone = mentorPhoneText.getText().toString();
                 String mentorEmail = mentorEmailText.getText().toString();
 
-                dbHelper.addCourse(title, startDate, endDate, "Notes", "Plan To Take", mentorName, mentorPhone, mentorEmail, Integer.valueOf(selectedTermId));
+                dbHelper.addCourse(title, startDate, endDate, "Notes", status, mentorName, mentorPhone, mentorEmail, Integer.valueOf(selectedTermId));
                 onBackPressed();
             }
         });

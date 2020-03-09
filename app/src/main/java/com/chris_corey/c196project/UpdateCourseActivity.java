@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.sql.Date;
@@ -19,6 +21,7 @@ public class UpdateCourseActivity extends AppCompatActivity {
 
     EditText titleText, mentorNameText, mentorPhoneText, mentorEmailText;
     Button displayStartDate, displayEndDate;
+    Spinner statusSpinner;
 
     DatePickerDialog.OnDateSetListener startDateListener;
     DatePickerDialog.OnDateSetListener endDateListener;
@@ -32,6 +35,7 @@ public class UpdateCourseActivity extends AppCompatActivity {
         selectedCourseId = intent.getStringExtra("SELECTED_COURSE_ID");
 
         titleText = findViewById(R.id.edit_text_add_course_title);
+        statusSpinner = findViewById(R.id.spinner_add_course_status);
         mentorNameText = findViewById(R.id.edit_text_add_course_mentor_name);
         mentorPhoneText = findViewById(R.id.edit_text_add_course_mentor_phone);
         mentorEmailText = findViewById(R.id.edit_text_add_course_mentor_email);
@@ -42,8 +46,6 @@ public class UpdateCourseActivity extends AppCompatActivity {
         getDB();
         final Course course = dbHelper.getCourseFromId(selectedCourseId);
 
-//        Toast.makeText(this, "Course name: " + course.getTitle(), Toast.LENGTH_SHORT).show();
-
 
         titleText.setText(course.getTitle());
         displayStartDate.setText(course.getStartDate().toString());
@@ -51,6 +53,12 @@ public class UpdateCourseActivity extends AppCompatActivity {
         mentorNameText.setText(course.getMentorName());
         mentorPhoneText.setText(course.getMentorPhone());
         mentorEmailText.setText(course.getMentorEmail());
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.course_status, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        statusSpinner.setAdapter(adapter);
+
+        statusSpinner.setSelection(adapter.getPosition(course.getStatus()));
 
 
         Button submitButton = findViewById(R.id.btn_add_course_submit);
@@ -70,6 +78,7 @@ public class UpdateCourseActivity extends AppCompatActivity {
                 String title = titleText.getText().toString();
                 Date startDate = Date.valueOf(displayStartDate.getText().toString());
                 Date endDate = Date.valueOf(displayEndDate.getText().toString());
+                String status = statusSpinner.getSelectedItem().toString();
                 String mentorName = mentorNameText.getText().toString();
                 String mentorPhone = mentorPhoneText.getText().toString();
                 String mentorEmail = mentorEmailText.getText().toString();
@@ -77,6 +86,7 @@ public class UpdateCourseActivity extends AppCompatActivity {
                 course.setTitle(title);
                 course.setStartDate(startDate);
                 course.setEndDate(endDate);
+                course.setStatus(status);
                 course.setMentorName(mentorName);
                 course.setMentorPhone(mentorPhone);
                 course.setMentorEmail(mentorEmail);

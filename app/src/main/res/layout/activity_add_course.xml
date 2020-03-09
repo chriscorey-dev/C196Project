@@ -38,6 +38,11 @@
 
     </LinearLayout>
 
+    <Spinner
+        android:id="@+id/spinner_add_course_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <EditText
         android:id="@+id/edit_text_add_course_mentor_name"
         android:layout_width="match_parent"

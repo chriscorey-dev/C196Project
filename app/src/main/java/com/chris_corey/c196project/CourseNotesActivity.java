@@ -77,8 +77,6 @@ public class CourseNotesActivity extends AppCompatActivity {
     }
 
     private void saveNotes() {
-        // TODO: Validation
-
         dbHelper.setCourseNotes(notesText.getText().toString(), selectedCourseId);
     }
 

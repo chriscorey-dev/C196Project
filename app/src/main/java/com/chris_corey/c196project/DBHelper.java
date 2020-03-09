@@ -97,7 +97,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void updateCourse(Course course) {
-        this.getWritableDatabase().execSQL("UPDATE courses SET title = '"+ course.getTitle() +"', start_date = '"+ course.getStartDate() +"', end_date = '"+ course.getEndDate() +"', mentor_name = '"+ course.getMentorName() +"', mentor_phone = '"+ course.getMentorPhone() +"', mentor_email = '"+ course.getMentorEmail() +"' WHERE id = "+ course.getId());
+        this.getWritableDatabase().execSQL("UPDATE courses SET title = '"+ course.getTitle() +"', start_date = '"+ course.getStartDate() +"', end_date = '"+ course.getEndDate() +"', status = '"+ course.getStatus() +"', mentor_name = '"+ course.getMentorName() +"', mentor_phone = '"+ course.getMentorPhone() +"', mentor_email = '"+ course.getMentorEmail() +"' WHERE id = "+ course.getId());
     }
 
     public void deleteCourse(String id) {

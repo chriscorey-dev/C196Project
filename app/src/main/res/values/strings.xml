@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">C196Project</string>
+
+    <string-array name="course_status">
+        <item>Plan To Take</item>
+        <item>In Progress</item>
+        <item>Completed</item>
+        <item>Dropped</item>
+    </string-array>
 </resources>

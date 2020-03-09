@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -137,6 +138,13 @@ public class CourseDetailsActivity extends AppCompatActivity {
         buttonAddNewAssessment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                int associatedAssessments = dbHelper.getAssociatedAssessments(selectedCourseId).size();
+                if (associatedAssessments >= 5) {
+                    Toast.makeText(CourseDetailsActivity.this, "There are already 5 associated assessments!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 Intent intent = new Intent(CourseDetailsActivity.this, AddAssessmentActivity.class);
                 intent.putExtra("SELECTED_COURSE_ID", selectedCourseId);
                 startActivity(intent);

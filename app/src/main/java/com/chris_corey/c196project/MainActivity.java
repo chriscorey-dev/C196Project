@@ -2,6 +2,7 @@ package com.chris_corey.c196project;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,12 +19,9 @@ public class MainActivity extends AppCompatActivity {
     public DBHelper dbHelper;
 
     //TODO LIST:
-    //TODO: Ability to change course status
-    //TODO: Ability to change assessment status?
-    //TODO: 'as many as 5 assessments to each course'
+    //TODO: Ability to change assessment type?
     //TODO: Notification on start & end date for courses
     //TODO: Notification on due dates for assessments
-    //TODO: Custom color scheme & icon
     //TODO: Home screen ('scheduling and progress tracking elements'
     //TODO: Essay
     //TODO: Pictures of storyboard
@@ -35,6 +33,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initiateDatabase();
+
+        // DEBUG: Populates database if first time the app runs
+        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        boolean firstStart = prefs.getBoolean("firstStart", true);
+        if (firstStart) {
+            dbHelper.populateDatabase();
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("firstStart", false);
+            editor.apply();
+        }
 
         Button btnTermList = findViewById(R.id.btn_term_list);
         btnTermList.setOnClickListener(new View.OnClickListener() {
@@ -64,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.reset_database:
 
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-                alertDialogBuilder.setTitle("Confirmation").setMessage("Are you sure you want to completely reset the database?").setCancelable(true).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                alertDialogBuilder.setTitle("Confirmation").setMessage("Are you sure you want to reset the database to its original state?").setCancelable(true).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         resetDatabase();
