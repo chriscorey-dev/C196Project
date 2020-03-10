@@ -15,15 +15,10 @@ public class MainActivity extends AppCompatActivity {
     public DBHelper dbHelper;
 
     //TODO LIST:
-    //TODO: Validate dates so start can't be after end?
-    //TODO: Ability to change assessment type?
-    //TODO: Notification on start & end date for courses
-    //TODO: Notification on due dates for assessments
     //TODO: Home screen ('scheduling and progress tracking elements'
     //TODO: Essay
     //TODO: Pictures of storyboard
     //TODO: Screenshots of deployment package
-    //TODO: Deleting term and backing out of prompts still deletes lol
     //TODO: Notifications that are created when DB is reset have seemingly random parent IDs.
 
     @Override

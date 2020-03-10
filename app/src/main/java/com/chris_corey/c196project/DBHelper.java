@@ -240,10 +240,6 @@ public ArrayList<Notification> getCourseNotificationsFromParentId(String parentI
             associatedIds.add(cursor.getString(cursor.getColumnIndex("id")));
         }
 
-        for (String id : associatedIds) {
-            deleteCourse(id);
-        }
-
         return associatedIds;
     }
 
