@@ -1,7 +1,11 @@
 package com.chris_corey.c196project;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +27,8 @@ public class AddAssessmentActivity extends AppCompatActivity {
 
     RadioGroup radioGroup;
     RadioButton radioButton;
+
+    Assessment assessment;
 
     DatePickerDialog.OnDateSetListener dueDateListener;
 
@@ -53,7 +59,6 @@ public class AddAssessmentActivity extends AppCompatActivity {
                 }
 
 
-
                 String title = titleText.getText().toString();
                 Date dueDate = Date.valueOf(displayDueDate.getText().toString());
 
@@ -64,6 +69,11 @@ public class AddAssessmentActivity extends AppCompatActivity {
 
 
                 dbHelper.addAssessment(title, dueDate, type, Integer.valueOf(selectedCourseId));
+
+                assessment = dbHelper.getLatestAssessment();
+
+                // Alarms
+                handleAlarms(assessment);
                 onBackPressed();
             }
         });
@@ -96,7 +106,7 @@ public class AddAssessmentActivity extends AppCompatActivity {
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month++;
 //                displayStartDate.setText(month+"/"+day+"/"+year);
-                displayDueDate.setText(year+"-"+month+"-"+day);
+                displayDueDate.setText(year + "-" + month + "-" + day);
             }
         };
     }
@@ -107,21 +117,54 @@ public class AddAssessmentActivity extends AppCompatActivity {
     }
 
     private boolean validate() {
-        boolean isValid = true;
-
         if (titleText.getText().length() == 0) {
-            isValid = false;
-        }
-        if (displayDueDate.getText().toString().equals("Due Date")) {
-            isValid = false;
+            return false;
         }
 
-        return isValid;
+        if (displayDueDate.getText().toString().equals("Due Date")) {
+            return false;
+        } else if (Date.valueOf(displayDueDate.getText().toString()).before(Calendar.getInstance().getTime())) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         dbHelper.close();
+    }
+
+    private void handleAlarms(Assessment assessment) {
+        Calendar startCal = Calendar.getInstance();
+        startCal.setTime(assessment.getDueDate());
+        dueDateAlarm(startCal);
+    }
+
+    private void dueDateAlarm(Calendar cal) {
+        dbHelper.addNotification(assessment.getDueDate(), "assessment_due", assessment.getId());
+        Notification notification = dbHelper.getLatestNotification();
+
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(this, AlertReceiver.class);
+//        intent.putExtra("NOTIFICATION_CHANNEL", "assessment");
+        intent.putExtra("NOTIFICATION_TYPE", notification.getType());
+        intent.putExtra("CHANNEL_ID", String.valueOf(notification.getRequestCode()));
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notification.getRequestCode(), intent, 0);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
+    }
+
+    private void cancelAlarm() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        for (Notification notification : dbHelper.getAssessmentNotificationsFromParentId(String.valueOf(assessment.getId()))){
+
+            Intent startIntent = new Intent(this, AlertReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notification.getRequestCode(), startIntent, 0);
+            alarmManager.cancel(pendingIntent);
+        }
     }
 }

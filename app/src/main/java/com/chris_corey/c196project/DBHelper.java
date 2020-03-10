@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -31,6 +30,59 @@ public class DBHelper extends SQLiteOpenHelper {
         this.getWritableDatabase().execSQL("CREATE TABLE IF NOT EXISTS terms (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, start_date DATE, end_date DATE)");
         this.getWritableDatabase().execSQL("CREATE TABLE IF NOT EXISTS courses (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, start_date DATE, end_date DATE, notes TEXT, status TEXT, mentor_name TEXT, mentor_phone TEXT, mentor_email TEXT, parent_term INTEGER)");
         this.getWritableDatabase().execSQL("CREATE TABLE IF NOT EXISTS assessments (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, due_date DATE, type TEXT, complete BOOLEAN, parent_course INTEGER)");
+        this.getWritableDatabase().execSQL("CREATE TABLE IF NOT EXISTS notifications (request_code INTEGER PRIMARY KEY AUTOINCREMENT, date DATE, type TEXT, parent_id INTEGER)");
+    }
+
+    public void addNotification(Date date, String type, int parentId) {
+        this.getWritableDatabase().execSQL("INSERT INTO notifications (date, type, parent_id) VALUES ('"+ date +"', '"+ type +"', "+ parentId +")");
+    }
+
+    public void deleteNotification(String request_code) {
+        this.getWritableDatabase().delete("notifications", "request_code = " + request_code, null);
+    }
+
+//    public ArrayList<Notification> getNotificationsFromParentId(String parentId) {
+public ArrayList<Notification> getCourseNotificationsFromParentId(String parentId) {
+    ArrayList<Notification> notifications = new ArrayList<>();
+
+    Cursor cursor = this.getWritableDatabase().rawQuery("SELECT * FROM notifications WHERE parent_id = "+ parentId +" AND (type = 'course_start' OR type = 'course_end')", null);
+    Notification notification = null;
+
+    while(cursor.moveToNext()) {
+        Date date = Date.valueOf(cursor.getString(cursor.getColumnIndex("date")));
+
+        notification = new Notification(cursor.getInt(cursor.getColumnIndex("request_code")), date, cursor.getString(cursor.getColumnIndex("type")), cursor.getInt(cursor.getColumnIndex("parent_id")));
+        notifications.add(notification);
+    }
+
+    return notifications;
+}
+    public ArrayList<Notification> getAssessmentNotificationsFromParentId(String parentId) {
+        ArrayList<Notification> notifications = new ArrayList<>();
+
+        Cursor cursor = this.getWritableDatabase().rawQuery("SELECT * FROM notifications WHERE parent_id = "+ parentId +" AND type = 'assessment_due'", null);
+        Notification notification = null;
+
+        while(cursor.moveToNext()) {
+            Date date = Date.valueOf(cursor.getString(cursor.getColumnIndex("date")));
+
+            notification = new Notification(cursor.getInt(cursor.getColumnIndex("request_code")), date, cursor.getString(cursor.getColumnIndex("type")), cursor.getInt(cursor.getColumnIndex("parent_id")));
+            notifications.add(notification);
+        }
+
+        return notifications;
+    }
+
+    public Notification getLatestNotification() {
+        Cursor cursor = this.getWritableDatabase().rawQuery("SELECT * FROM notifications ORDER BY request_code DESC LIMIT 1", null);
+        Notification notification = null;
+
+        while(cursor.moveToNext()) {
+            Date date = Date.valueOf(cursor.getString(cursor.getColumnIndex("date")));
+
+            notification = new Notification(cursor.getInt(cursor.getColumnIndex("request_code")), date, cursor.getString(cursor.getColumnIndex("type")), cursor.getInt(cursor.getColumnIndex("parent_id")));
+        }
+        return notification;
     }
 
     public Term getTermFromId(String id) {
@@ -74,6 +126,26 @@ public class DBHelper extends SQLiteOpenHelper {
         return assessment;
     }
 
+    public Course getLatestCourse() {
+        Cursor cursor = this.getWritableDatabase().rawQuery("SELECT * FROM courses ORDER BY ID DESC LIMIT 1", null);
+        Course course = null;
+
+        while (cursor.moveToNext()) {
+            course = new Course(cursor.getInt(cursor.getColumnIndex("id")), cursor.getString(cursor.getColumnIndex("title")), Date.valueOf(cursor.getString(cursor.getColumnIndex("start_date"))), Date.valueOf(cursor.getString(cursor.getColumnIndex("end_date"))), cursor.getString(cursor.getColumnIndex("notes")), cursor.getString(cursor.getColumnIndex("status")), cursor.getString(cursor.getColumnIndex("mentor_name")), cursor.getString(cursor.getColumnIndex("mentor_phone")), cursor.getString(cursor.getColumnIndex("mentor_email")), cursor.getInt(cursor.getColumnIndex("parent_term")));
+        }
+        return course;
+    }
+
+    public Assessment getLatestAssessment() {
+        Cursor cursor = this.getWritableDatabase().rawQuery("SELECT * FROM assessments ORDER BY ID DESC LIMIT 1", null);
+        Assessment assessment = null;
+        while (cursor.moveToNext()) {
+            assessment = new Assessment(cursor.getInt(cursor.getColumnIndex("id")), cursor.getString(cursor.getColumnIndex("title")), Date.valueOf(cursor.getString(cursor.getColumnIndex("due_date"))), cursor.getString(cursor.getColumnIndex("type")), cursor.getInt(cursor.getColumnIndex("parent_course")));
+        }
+        return assessment;
+    }
+
+
     public void addTerm(String title, Date startDate, Date endDate) {
         this.getWritableDatabase().execSQL("INSERT INTO terms (title, start_date, end_date) VALUES ('"+ title +"', '"+ startDate +"', '"+ endDate +"')");
     }
@@ -94,6 +166,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void addCourse(String title, Date startDate, Date endDate, String notes, String status, String mentorName, String mentorEmail, String mentorPhone, int parentTerm) {
         this.getWritableDatabase().execSQL("INSERT INTO courses (title, start_date, end_date, notes, status, mentor_name, mentor_email, mentor_phone, parent_term) VALUES ('"+ title +"', '"+ startDate +"', '"+ endDate +"', '"+ notes +"', '"+ status +"', '"+ mentorName +"', '"+ mentorEmail +"', '"+ mentorPhone +"', "+ parentTerm +")");
+        this.addNotification(startDate, "course_start", getLatestCourse().getId());
+        this.addNotification(endDate, "course_end", getLatestCourse().getId());
+
     }
 
     public void updateCourse(Course course) {
@@ -107,11 +182,17 @@ public class DBHelper extends SQLiteOpenHelper {
         for (String assessmentId : associatedIds) {
             deleteAssessment(assessmentId);
         }
+
+        ArrayList<Notification> associatedNotifications = getCourseNotificationsFromParentId(id);
+        for (Notification notification : associatedNotifications) {
+            deleteNotification(String.valueOf(notification.getRequestCode()));
+        }
     }
 
 
     public void addAssessment(String title, Date dueDate, String type, int parentCourse) {
         this.getWritableDatabase().execSQL("INSERT INTO assessments (title, due_date, type, parent_course) VALUES ('"+ title +"', '"+ dueDate +"', '"+ type +"', "+ parentCourse +")");
+        this.addNotification(dueDate, "assessment_due", getLatestAssessment().getId());
     }
 
     public void updateAssessment(Assessment assessment) {
@@ -120,6 +201,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void deleteAssessment(String id) {
         this.getWritableDatabase().delete("assessments", "id = " + id, null);
+
+//        ArrayList<Notification> associatedNotifications = getNotificationsFromParentId(id);
+        ArrayList<Notification> associatedNotifications = getAssessmentNotificationsFromParentId(id);
+        for (Notification notification : associatedNotifications) {
+            deleteNotification(String.valueOf(notification.getRequestCode()));
+        }
     }
 
 

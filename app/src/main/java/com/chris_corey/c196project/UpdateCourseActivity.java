@@ -1,6 +1,9 @@
 package com.chris_corey.c196project;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class UpdateCourseActivity extends AppCompatActivity {
@@ -25,6 +29,8 @@ public class UpdateCourseActivity extends AppCompatActivity {
 
     DatePickerDialog.OnDateSetListener startDateListener;
     DatePickerDialog.OnDateSetListener endDateListener;
+
+    Course course;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +50,7 @@ public class UpdateCourseActivity extends AppCompatActivity {
 
 
         getDB();
-        final Course course = dbHelper.getCourseFromId(selectedCourseId);
-
+        course = dbHelper.getCourseFromId(selectedCourseId);
 
         titleText.setText(course.getTitle());
         displayStartDate.setText(course.getStartDate().toString());
@@ -92,6 +97,9 @@ public class UpdateCourseActivity extends AppCompatActivity {
                 course.setMentorEmail(mentorEmail);
 
                 dbHelper.updateCourse(course);
+
+                cancelAlarm();
+                handleAlarms(course);
                 onBackPressed();
             }
         });
@@ -187,5 +195,46 @@ public class UpdateCourseActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         dbHelper.close();
+    }
+
+    private void handleAlarms(Course course) {
+        Calendar startCal = Calendar.getInstance();
+        startCal.setTime(course.getStartDate());
+        dueDateAlarm();
+    }
+
+    private void dueDateAlarm() {
+        ArrayList<Notification> notifications = new ArrayList<>();
+
+        dbHelper.addNotification(course.getStartDate(), "course_start", course.getId());
+        notifications.add(dbHelper.getLatestNotification());
+        dbHelper.addNotification(course.getEndDate(), "course_end", course.getId());
+        notifications.add(dbHelper.getLatestNotification());
+
+        for (Notification notification : notifications) {
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+            Intent intent = new Intent(this, AlertReceiver.class);
+            intent.putExtra("NOTIFICATION_TYPE", notification.getType());
+            intent.putExtra("CHANNEL_ID", String.valueOf(notification.getRequestCode()));
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notification.getRequestCode(), intent, 0);
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(notification.getDate());
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
+        }
+    }
+
+    private void cancelAlarm() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        for (Notification notification : dbHelper.getCourseNotificationsFromParentId(String.valueOf(course.getId()))) {
+            dbHelper.deleteNotification(String.valueOf(notification.getRequestCode()));
+
+            Intent startIntent = new Intent(this, AlertReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notification.getRequestCode(), startIntent, 0);
+            alarmManager.cancel(pendingIntent);
+        }
     }
 }

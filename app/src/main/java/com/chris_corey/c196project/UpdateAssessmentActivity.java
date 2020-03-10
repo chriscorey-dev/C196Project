@@ -1,6 +1,9 @@
 package com.chris_corey.c196project;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +30,8 @@ public class UpdateAssessmentActivity extends AppCompatActivity {
 
     DatePickerDialog.OnDateSetListener dueDateListener;
 
+    Assessment assessment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +47,7 @@ public class UpdateAssessmentActivity extends AppCompatActivity {
         radioButtonPA = findViewById(R.id.radio_btn_add_assessment_PA);
 
         getDB();
-        final Assessment assessment = dbHelper.getAssessmentFromId(selectedAssessmentId);
+        assessment = dbHelper.getAssessmentFromId(selectedAssessmentId);
 
         titleText.setText(assessment.getTitle());
         displayDueDate.setText(assessment.getDueDate().toString());
@@ -81,6 +86,10 @@ public class UpdateAssessmentActivity extends AppCompatActivity {
                 assessment.setType(type);
 
                 dbHelper.updateAssessment(assessment);
+
+
+                cancelAlarm();
+                handleAlarms(assessment);
                 onBackPressed();
             }
         });
@@ -93,7 +102,7 @@ public class UpdateAssessmentActivity extends AppCompatActivity {
             }
         });
 
-        displayDueDate= findViewById(R.id.btn_add_assessment_due_date);
+        displayDueDate = findViewById(R.id.btn_add_assessment_due_date);
         displayDueDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,7 +123,7 @@ public class UpdateAssessmentActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month++;
-                displayDueDate.setText(year+"-"+month+"-"+day);
+                displayDueDate.setText(year + "-" + month + "-" + day);
             }
         };
     }
@@ -146,5 +155,36 @@ public class UpdateAssessmentActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         dbHelper.close();
+    }
+
+    private void handleAlarms(Assessment assessment) {
+        Calendar startCal = Calendar.getInstance();
+        startCal.setTime(assessment.getDueDate());
+        dueDateAlarm(startCal);
+    }
+
+    private void dueDateAlarm(Calendar cal) {
+        dbHelper.addNotification(assessment.getDueDate(), "assessment_due", assessment.getId());
+        Notification notification = dbHelper.getLatestNotification();
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(this, AlertReceiver.class);
+        intent.putExtra("NOTIFICATION_TYPE", notification.getType());
+        intent.putExtra("CHANNEL_ID", String.valueOf(notification.getRequestCode()));
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notification.getRequestCode(), intent, 0);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
+    }
+
+    private void cancelAlarm() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        for (Notification notification : dbHelper.getAssessmentNotificationsFromParentId(String.valueOf(assessment.getId()))) {
+            dbHelper.deleteNotification(String.valueOf(notification.getRequestCode()));
+
+            Intent startIntent = new Intent(this, AlertReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notification.getRequestCode(), startIntent, 0);
+            alarmManager.cancel(pendingIntent);
+        }
     }
 }
